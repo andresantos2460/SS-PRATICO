@@ -412,8 +412,9 @@ table.grelha tr.total td { border-top: 2px solid var(--fg); }
       <button class="tab" role="tab" type="button" data-tab="exercicios" aria-controls="p-exercicios"><span class="n">3</span>Exercícios</button>
       <button class="tab" role="tab" type="button" data-tab="teste" aria-controls="p-teste"><span class="n">4</span>Teste modelo 1</button>
       <button class="tab" role="tab" type="button" data-tab="teste2" aria-controls="p-teste2"><span class="n">5</span>Teste modelo 2</button>
-      <button class="tab" role="tab" type="button" data-tab="gerador" aria-controls="p-gerador"><span class="n">6</span>Gerador iptables</button>
-      <button class="tab" role="tab" type="button" data-tab="scripts" aria-controls="p-scripts"><span class="n">7</span>Scripts prontos</button>
+      <button class="tab" role="tab" type="button" data-tab="teste3" aria-controls="p-teste3"><span class="n">6</span>Teste modelo 3</button>
+      <button class="tab" role="tab" type="button" data-tab="gerador" aria-controls="p-gerador"><span class="n">7</span>Gerador iptables</button>
+      <button class="tab" role="tab" type="button" data-tab="scripts" aria-controls="p-scripts"><span class="n">8</span>Scripts prontos</button>
     </nav>
   </div>
 </header>
@@ -458,7 +459,7 @@ table.grelha tr.total td { border-top: 2px solid var(--fg); }
       <li><b>Erros:</b> muito provavelmente ficheiros ou comandos com erros, para dizeres qual é e corrigires.</li>
       <li><b>Formato:</b> o teste tem <b>5 perguntas</b>, uma por matéria: nmap, SSH, iptables, Squid e encriptação (cifra simétrica, hash, esteganografia).</li>
     </ul>
-    <p>Treina com <a href="#e-tpl">o template</a>, <a href="#e-ipt-erros">os erros de iptables</a>, <a href="#e-squid">o Squid</a>, <a href="#e-ssh">os túneis</a>, o <a href="#teste">Teste modelo 1</a> e o <a href="#teste2">Teste modelo 2</a> (só iptables, Squid e encriptação).</p>
+    <p>Treina com <a href="#e-tpl">o template</a>, <a href="#e-ipt-erros">os erros de iptables</a>, <a href="#e-squid">o Squid</a>, <a href="#e-ssh">os túneis</a>, o <a href="#teste">Teste modelo 1</a>, o <a href="#teste2">Teste modelo 2</a> (só iptables, Squid e encriptação) e o <a href="#teste3">Teste modelo 3</a> (simples, um pouco de tudo, com o template oficial).</p>
   </div>
   <ol class="steps">
     <li><b>Conhecer a máquina</b><p>Antes de escrever regras, anota as placas, os IPs, o gateway e o DNS.</p>
@@ -12372,6 +12373,495 @@ $IPT -j <span class="t">ACCEPT</span> -A OUTPUT -p tcp --sport $DYN --dport 80 -
 </div>
 </div>
 
+<div class="panel" data-tab="teste3" id="p-teste3" hidden>
+<div class="layout">
+<nav class="toc" aria-label="Índice do teste modelo 3"><details><summary>Índice do teste 3</summary><div class="toc-body"></div></details></nav>
+<div class="content">
+
+<div class="intro">
+  <p class="eyebrow">Teste modelo 3 · 5 perguntas · 1h30 · 20 valores</p>
+  <h1>Teste modelo 3: a missão do servidor da loja</h1>
+  <p>Um teste <b>simples</b>, com um pouco de tudo: <b>1 nmap</b>, <b>2 SSH</b>, <b>3 iptables</b> (o template oficial do professor), <b>4 Squid</b> e <b>5 encriptação</b>. Cada pergunta tem poucas alíneas e um <b>objetivo final</b>: a última alínea é a prova de que chegaste lá. As perguntas estão ligadas: a <b>P1</b> dá-te uma password, a <b>P2</b> uma passphrase, e na <b>P5</b> usas as duas para abrir o cofre.</p>
+</div>
+
+<div class="toolbar exam-bar">
+  <span class="timer" id="t3-tempo">1:30:00</span>
+  <button class="btn" type="button" id="t3-iniciar">Iniciar</button>
+  <button class="btn-ghost" type="button" id="t3-repor">Repor</button>
+  <span class="sep" aria-hidden="true"></span>
+  <button class="btn-ghost" type="button" id="t3-abrir">Mostrar todas as resoluções</button>
+  <button class="btn-ghost" type="button" id="t3-fechar">Esconder</button>
+  <span class="count" id="t3-nota-mini"></span>
+</div>
+<div class="t-flutua" id="t3-flutua" hidden></div>
+
+<!-- ================================================================ CAPA -->
+<section class="card" id="t3-capa" data-grupo="Teste modelo 3" data-k="teste modelo 3 instruções cenário cotações entrega missão objetivo final loja">
+  <p class="eyebrow">Antes de começar</p>
+  <h2>Instruções e cenário (teste 3)</h2>
+  <div class="tbl"><table>
+    <tr><th>Duração</th><td>1 hora e 30 minutos (o cronómetro guarda o tempo, mesmo que feches a página)</td></tr>
+    <tr><th>Perguntas</th><td><a href="#t3-p1">1</a> nmap (3 val.) · <a href="#t3-p2">2</a> SSH (3 val.) · <a href="#t3-p3">3</a> iptables (6 val.) · <a href="#t3-p4">4</a> Squid (4 val.) · <a href="#t3-p5">5</a> encriptação (4 val.)</td></tr>
+    <tr><th>Objetivo final do teste</th><td>entregar o ficheiro <code>~/teste3/missao.txt.asc</code> (P5 e) com as 5 respostas-chave: o porto escondido, a password, a passphrase, o documento alterado e o código do cofre</td></tr>
+    <tr><th>Entrega</th><td>a pasta <code>~/teste3/</code> com o <code>firewall.sh</code> alterado, as linhas do <code>squid.conf</code>, os ficheiros pedidos e um <code>respostas.txt</code> com os comandos usados, alínea a alínea</td></tr>
+    <tr><th>Regras</th><td>sem Internet. Faz a <b>P1 e a P2 antes</b> de ativar a firewall da P3 (a firewall fecha a OUTPUT da VM e o nmap deixava de ver a rede). Em cada alteração do <code>firewall.sh</code> põe a alínea no <code>echo</code>, como o template pede.</td></tr>
+  </table></div>
+  <figure class="diag">
+<svg viewBox="0 0 800 190" role="img" aria-label="Cenário: a máquina física 192.168.56.1, PC do administrador, liga-se pela rede host-only 192.168.56.0/24 à VM Ubuntu 192.168.56.20, que tem web no 80, ssh no 22, squid no 3128, um serviço escondido num porto entre 3000 e 3999 e um painel só em 127.0.0.1:5000; a Internet está bloqueada.">
+  <rect x="20" y="46" width="210" height="90" rx="10" class="dg-box"/>
+  <text x="125" y="74" text-anchor="middle" class="dg-tb">Máquina física</text>
+  <text x="125" y="94" text-anchor="middle" class="dg-s">PC do administrador</text>
+  <text x="125" y="118" text-anchor="middle" class="dg-m">192.168.56.1</text>
+  <line x1="230" y1="91" x2="398" y2="91" class="dg-ln"/>
+  <text x="314" y="81" text-anchor="middle" class="dg-s">host-only</text>
+  <text x="314" y="109" text-anchor="middle" class="dg-ms">192.168.56.0/24</text>
+  <rect x="400" y="16" width="262" height="158" rx="10" class="dg-acc"/>
+  <text x="531" y="40" text-anchor="middle" class="dg-tb">VM Ubuntu (servidor da loja)</text>
+  <text x="414" y="66" class="dg-m">enp0s8  192.168.56.20</text>
+  <text x="414" y="86" class="dg-m">enp0s3  10.0.2.15 (NAT)</text>
+  <text x="414" y="110" class="dg-s">web 80 · ssh 22 · squid 3128</text>
+  <text x="414" y="130" class="dg-s">? escondido entre 3000 e 3999</text>
+  <text x="414" y="150" class="dg-s">painel só em 127.0.0.1:5000</text>
+  <line x1="662" y1="91" x2="770" y2="91" class="dg-ln-d"/>
+  <text x="716" y="81" text-anchor="middle" class="dg-s">NAT</text>
+  <text x="716" y="109" text-anchor="middle" class="dg-s">Internet</text>
+  <text x="716" y="125" text-anchor="middle" class="dg-s">bloqueada</text>
+</svg>
+  <figcaption>Só existem a VM e a máquina física (o PC do administrador). O utilizador na VM é <code>aluno</code>. Ferramentas instaladas: nmap, squid, openssh, iptables, openssl, gpg, steghide, python3.</figcaption>
+  </figure>
+  <p><b>Para treinar em casa</b>, prepara a VM uma vez (não leias os ficheiros criados: são as respostas das perguntas):</p>
+<div class="code" data-label="preparar o treino (na VM)"><pre><code>mkdir -p ~/teste3/docs ~/site ~/servico ~/painel
+echo '&lt;title&gt;Loja&lt;/title&gt;&lt;h1&gt;Loja&lt;/h1&gt;' &gt; ~/site/index.html
+echo '&lt;h1&gt;Promoções&lt;/h1&gt;' &gt; ~/site/promo.html
+echo 'Password do cofre: Marinha2026' &gt; ~/servico/pista.txt
+echo '&lt;h1&gt;Painel&lt;/h1&gt;&lt;p&gt;Passphrase da imagem: farol&lt;/p&gt;' &gt; ~/painel/index.html
+sudo -v                                                                  # a password fica em cache
+sudo python3 -m http.server 80 --directory ~/site &amp;                      # site da loja
+python3 -m http.server 3141 --directory ~/servico &amp;                     # o serviço escondido (P1)
+python3 -m http.server 5000 --bind 127.0.0.1 --directory ~/painel &amp;     # o painel (P2)
+echo "192.168.56.20 loja.empresa.pt" | sudo tee -a /etc/hosts
+# P5: documentos e a lista de hashes originais dada pelo professor
+cd ~/teste3/docs
+echo "Arroz: 120 kg"        &gt; stock.txt
+echo "Arroz: 0,20 euros"    &gt; precos.txt
+echo "Ana Silva, 912345678" &gt; clientes.txt
+cat &gt; SHA256SUMS &lt;&lt;'FIM'
+aebd0f34fcd3c9547484bbc98f91bc7bf60aa372b58346867e9faf30f467f7dd  stock.txt
+7458c08e932d3645c5afe004b6bc7be1dec1fc577e8077b8df53bb824e9284cc  precos.txt
+86cf36bbe4440820500bef494670dd5e29c84658ac95d5f6e862e5208fc4f24c  clientes.txt
+FIM
+# P5: uma imagem JPEG com uma mensagem escondida (qualquer JPEG; nas aulas: M6/wallpaper.jpg)
+echo "Chave do armario: 7319" &gt; /tmp/msg.txt
+steghide embed -cf ~/M6/wallpaper.jpg -ef /tmp/msg.txt -sf ~/teste3/farol.jpg -p farol
+rm /tmp/msg.txt
+# o cofre.enc, o firewall.sh e o squid.conf descarregam-se na secção seguinte</code></pre></div>
+</section>
+
+<!-- ================================================================ FICHEIROS -->
+<section class="card" id="t3-ficheiros" data-grupo="Teste modelo 3" data-k="ficheiros dados firewall.sh template oficial squid.conf cofre.enc teste 3">
+  <p class="eyebrow">Dados pelo professor</p>
+  <h2>Ficheiros fornecidos (teste 3)</h2>
+  <p>Descarrega-os (ou copia-os) para <code>~/teste3/</code>. O <code>firewall.sh</code> é o <b>template oficial</b> do professor, sem alterações. O excerto do <code>squid.conf</code> é a zona das regras do ficheiro da VM.</p>
+  <div class="dado"><span class="lab">Pergunta 3 · firewall.sh (o template oficial)</span>
+<div class="code" data-hl data-label="firewall.sh (template dado)" data-file="firewall.sh"><pre><code><span class="c">#!/bin/bash</span>
+
+<span class="c">#################################</span>
+<span class="c">#           Student ID</span>
+<span class="c">#################################</span>
+<span class="c">#   full name:</span>
+<span class="c">#      number:</span>
+<span class="c">#################################</span>
+
+echo &quot;Define iptables path&quot;
+IPT=/sbin/iptables
+
+echo &quot;Set default policy to DENY&quot;
+$IPT -P INPUT <span class="t">DROP</span>
+$IPT -P OUTPUT <span class="t">DROP</span>
+$IPT -P FORWARD <span class="t">DROP</span>
+
+echo &quot;Flush any existing filter rules&quot;
+$IPT -F
+
+
+<span class="c">#################################</span>
+<span class="c">#  Stateless rules</span>
+<span class="c">#################################</span>
+
+echo &quot;Allow loopback interface&quot;
+$IPT -A INPUT -i lo -j <span class="t">ACCEPT</span>
+$IPT -A OUTPUT -o lo -j <span class="t">ACCEPT</span>
+
+
+<span class="c"># Clearly indicate, using a comment or an echo command, which specific item you are addressing.</span>
+
+
+
+
+<span class="c">#################################</span>
+<span class="c">#  Stateful rules</span>
+<span class="c">#################################</span>
+
+echo &quot;Generic stateful rules&quot;
+$IPT -A INPUT -m state --state ESTABLISHED,RELATED -j <span class="t">ACCEPT</span>
+$IPT -A OUTPUT -m state --state ESTABLISHED,RELATED -j <span class="t">ACCEPT</span></code></pre></div>
+  </div>
+  <div class="dado"><span class="lab">Pergunta 4 · squid.conf</span>
+<div class="code" data-hl data-label="squid.conf (excerto dado: a zona das regras)" data-file="squid-regras3.conf"><pre><code>acl localnet src 192.168.0.0/16
+acl SSL_ports port 443
+acl Safe_ports port 80
+acl Safe_ports port 443
+acl Safe_ports port 1025-65535
+acl CONNECT method CONNECT
+
+http_access <span class="t">deny</span> !Safe_ports
+http_access <span class="t">deny</span> CONNECT !SSL_ports
+http_access <span class="t">allow</span> localhost manager
+http_access <span class="t">deny</span> manager
+
+<span class="c"># INSERT YOUR OWN RULE(S) HERE TO ALLOW ACCESS FROM YOUR CLIENTS</span>
+
+include /etc/squid/conf.d/*.conf
+http_access <span class="t">allow</span> localhost
+http_access <span class="t">deny</span> all
+
+http_port 3128</code></pre></div>
+  </div>
+  <div class="dado"><span class="lab">Pergunta 5 · cofre.enc</span>
+<div class="code" data-hl data-label="cofre.enc (ficheiro dado)" data-file="cofre.enc"><pre><code>U2FsdGVkX1+U4qpWGIKD863Zxkzu8ForZLLq9HYPb8ZeTekKWI7A8V5JAyfPcbhi
+JjUX+SGEF6bmDEU8+NgXjQ==</code></pre></div>
+  </div>
+</section>
+
+<!-- ================================================================ P1 NMAP -->
+<section class="card" id="t3-p1" data-grupo="As 5 perguntas (teste 3)" data-k="pergunta 1 nmap teste 3 serviço escondido porto 3000-3999 3141 vmodem -sV versão -sn -oN pista password">
+  <p class="eyebrow">Pergunta 1 · nmap · 3 valores</p>
+  <h2>Pergunta 1: nmap (o serviço escondido)</h2>
+  <div class="tip"><span class="lab">Objetivo final</span><p>Encontrar o serviço escondido da VM e ler o que ele guarda: é a <b>password do cofre</b> que vais usar na P5.</p></div>
+  <p>Faz os scans na VM. Para cada alínea indica o comando e o que encontraste.</p>
+  <ol type="a">
+    <li>Descobre as máquinas ativas na rede <code>192.168.56.0/24</code> sem fazer port scan e sem resolver nomes. Quantas são? <span class="cot">0,5</span></li>
+    <li>Faz um scan aos portos mais comuns da VM (<code>192.168.56.20</code>), com a versão dos serviços, e guarda o resultado em <code>nmap3.txt</code> (formato normal). Que serviços encontraste? <span class="cot">0,75</span></li>
+    <li>Há um serviço escondido num porto entre <b>3000 e 3999</b>. Encontra o porto, o serviço e a versão. Porque é que não apareceu na alínea b)? <span class="cot">0,75</span></li>
+    <li>Um colega correu <code>nmap -p 3000-3999 192.168.56.20</code> e viu <code>3141/tcp open vmodem</code>. Concluiu que é um modem. Tem razão? Explica. <span class="cot">0,5</span></li>
+    <li><b>Prova final:</b> lê o conteúdo do serviço escondido e escreve a password que lá está. <span class="cot">0,5</span></li>
+  </ol>
+  <details class="sol"><summary>Ver resolução</summary>
+<div class="code" data-label="P1 (na VM)"><pre><code>sudo nmap -sn -n 192.168.56.0/24                       # a) 2 ou 3 hosts up (física, VM e às vezes o DHCP do VirtualBox)
+sudo nmap -sV -oN nmap3.txt 192.168.56.20              # b) 22 ssh OpenSSH · 80 http SimpleHTTPServer · 3128 http-proxy Squid
+sudo nmap -sV -p 3000-3999 --open 192.168.56.20        # c) 3141/tcp open http SimpleHTTPServer 0.6 (Python 3.x)
+curl http://192.168.56.20:3141/                        # e) lista os ficheiros: pista.txt
+curl http://192.168.56.20:3141/pista.txt               # e) Password do cofre: Marinha2026</code></pre></div>
+  <ul>
+    <li><b>a)</b> <code>-sn</code> = só descoberta de máquinas (nenhum porto é testado); <code>-n</code> = não pergunta nomes ao DNS. Com <code>sudo</code>, na rede local, o nmap usa ARP: é rápido e a firewall não o trava.</li>
+    <li><b>b)</b> Sem <code>-p</code>, o nmap testa só os <b>1000 portos mais comuns</b>. <code>-sV</code> fala com cada serviço para saber o que é e a versão. <code>-oN</code> guarda o resultado como aparece no ecrã (o <code>-oG</code> também servia, mas o enunciado pede o formato normal).</li>
+    <li><b>c)</b> O <b>3141 não está nos 1000 mais comuns</b>, por isso o scan da b) nem lá foi. Para um intervalo é <code>-p 3000-3999</code>; o <code>--open</code> mostra só os abertos. O painel do 5000 nunca aparece: escuta só em <code>127.0.0.1</code>, não no IP da rede.</li>
+    <li><b>d)</b> Não. Sem <code>-sV</code> o nmap não fala com o serviço: o nome na coluna SERVICE vem só da tabela de portos (<code>nmap-services</code>), onde o 3141 está registado como <code>vmodem</code>. É um palpite pelo número do porto. Com <code>-sV</code> vê-se o que lá está de verdade: um servidor <code>http</code> em Python.</li>
+    <li><b>e)</b> É um servidor web, por isso basta o <code>curl</code> (ou o browser em <code>http://192.168.56.20:3141</code>). A password é <b>Marinha2026</b>.</li>
+  </ul>
+  <p class="muted">Critério: a) comando 0,25 + quantas 0,25 · b) <code>-sV</code> e <code>-oN</code> 0,5 + serviços 0,25 · c) porto/serviço/versão 0,5 + porquê 0,25 · d) 0,5 · e) 0,5.</p>
+  </details>
+</section>
+
+<!-- ================================================================ P2 SSH -->
+<section class="card" id="t3-p2" data-grupo="As 5 perguntas (teste 3)" data-k="pergunta 2 ssh teste 3 port forwarding túnel -L -D socks firefox painel 5000 7000 channel open failed -p 2222">
+  <p class="eyebrow">Pergunta 2 · SSH · 3 valores</p>
+  <h2>Pergunta 2: SSH (o painel só local)</h2>
+  <div class="tip"><span class="lab">Objetivo final</span><p>Abrir, no browser da máquina física, o painel da VM que só escuta em <code>127.0.0.1:5000</code>, e ler a <b>passphrase da imagem</b> que vais usar na P5.</p></div>
+  <p>Os comandos correm na <b>máquina física</b>. Se a VM não tiver o <code>openssh-server</code>, responde por escrito.</p>
+  <ol type="a">
+    <li>Escreve o comando que cria um túnel para abrires o painel em <code>http://localhost:7000</code>. Explica cada parte do comando. <span class="cot">1</span></li>
+    <li>Um colega escreveu <code>ssh -N -L 7000:192.168.56.20:5000 aluno@192.168.56.20</code>. O browser dá erro e o terminal mostra <code>channel 2: open failed: connect failed: Connection refused</code>. Porquê? Corrige. <span class="cot">0,5</span></li>
+    <li>Escreve o comando para a máquina física navegar através da VM com um proxy SOCKS no porto 1080, e diz como configuras o Firefox. <span class="cot">0,5</span></li>
+    <li>Depois da P3, o SSH também responde no porto <b>2222</b>. Reescreve o comando da a) para entrar pelo 2222. <span class="cot">0,5</span></li>
+    <li><b>Prova final:</b> com o túnel da a) aberto, mostra o painel e escreve a passphrase. Porque é que <code>curl http://192.168.56.20:5000</code> (sem túnel) não funciona? <span class="cot">0,5</span></li>
+  </ol>
+  <details class="sol"><summary>Ver resolução</summary>
+<div class="code" data-label="P2 (na máquina física)"><pre><code>ssh -N -L 7000:localhost:5000 aluno@192.168.56.20          # a) fica "parado": é normal, o túnel está aberto
+ssh -N -L 7000:localhost:5000 aluno@192.168.56.20          # b) a correção: o destino é localhost, visto da VM
+ssh -N -D 1080 aluno@192.168.56.20                         # c) proxy SOCKS em localhost:1080
+ssh -N -p 2222 -L 7000:localhost:5000 aluno@192.168.56.20  # d) o -p muda o porto do SSH, o túnel é o mesmo
+curl http://localhost:7000                                 # e) &lt;h1&gt;Painel&lt;/h1&gt;&lt;p&gt;Passphrase da imagem: farol&lt;/p&gt;</code></pre></div>
+<div class="tbl"><table>
+  <tr><th>Parte (a)</th><th>Quer dizer</th></tr>
+  <tr><td><code>-N</code></td><td>não abre shell: só mantém o túnel</td></tr>
+  <tr><td><code>-L</code></td><td>túnel <b>local</b>: o porto de entrada abre-se na máquina onde escreves o comando (a física)</td></tr>
+  <tr><td><code>7000</code></td><td>o porto que fica à escuta na máquina física</td></tr>
+  <tr><td><code>localhost:5000</code></td><td>o destino, <b>visto do lado da VM</b>: o porto 5000 da própria VM</td></tr>
+  <tr><td><code>aluno@192.168.56.20</code></td><td>o login SSH na VM (porto 22)</td></tr>
+</table></div>
+  <ul>
+    <li><b>b)</b> O destino do <code>-L</code> é resolvido <b>pela VM</b>. O colega pediu-lhe <code>192.168.56.20:5000</code>, mas o painel só escuta em <code>127.0.0.1</code>: nesse IP não há nada no 5000 e a ligação é recusada. O túnel em si estava bem (o SSH entrou). Correção: <code>localhost:5000</code>. Confirma na VM com <code>ss -lnt</code> (aparece <code>127.0.0.1:5000</code>).</li>
+    <li><b>c)</b> <code>-D</code> = túnel dinâmico: a física fica com um proxy SOCKS e cada pedido sai pela VM. Firefox: Definições → Rede → Configuração manual do proxy → <b>Anfitrião SOCKS</b> <code>localhost</code>, porta <code>1080</code>, <b>SOCKS v5</b> (o proxy HTTP fica vazio).</li>
+    <li><b>d)</b> O <code>-p 2222</code> só muda o porto onde o SSH se liga; o REDIRECT da P3 leva o 2222 ao 22. Tudo o resto fica igual.</li>
+    <li><b>e)</b> A passphrase é <b>farol</b>. Sem túnel não dá porque o painel escuta só em <code>127.0.0.1</code>: aceita apenas ligações da própria VM. O túnel resolve isso: para o painel, o pedido vem de dentro da VM (é o <code>sshd</code> que se liga a ele).</li>
+  </ul>
+  <p class="muted">Critério: a) comando 0,5 + explicação 0,5 · b) porquê 0,25 + correção 0,25 · c) comando 0,25 + Firefox 0,25 · d) 0,5 · e) passphrase 0,25 + porquê 0,25.</p>
+  </details>
+</section>
+
+<!-- ================================================================ P3 IPTABLES -->
+<section class="card" id="t3-p3" data-grupo="As 5 perguntas (teste 3)" data-k="pergunta 3 iptables teste 3 template oficial cliente servidor redirect 8080 2222 nat -F unknown option --dport -p tcp regras3.txt">
+  <p class="eyebrow">Pergunta 3 · iptables · 6 valores</p>
+  <h2>Pergunta 3: iptables (o template oficial)</h2>
+  <div class="tip"><span class="lab">Objetivo final</span><p>Correr o teu <code>firewall.sh</code> sem erros e a tabela de testes da alínea e) dar <b>tudo o que é pedido</b>: o que deve funcionar funciona, e o que deve falhar falha.</p></div>
+  <p>A VM é o servidor da loja; o administrador é a máquina física (<code>192.168.56.1</code>). Trabalha sobre o <a href="#t3-ficheiros">template fornecido</a> e acrescenta as regras na zona do comentário <i>"Clearly indicate…"</i>, uma <code>echo</code> por alínea.</p>
+  <ol type="a">
+    <li><b>Cliente:</b> a VM pode usar DNS (UDP e TCP), navegar em HTTP e HTTPS e fazer ping a qualquer máquina. <span class="cot">1,25</span></li>
+    <li><b>Servidor:</b> a VM disponibiliza a web (80) e o serviço do porto 3141 a todos; aceita SSH só do administrador; o proxy Squid (3128) só à rede <code>192.168.56.0/24</code>; e responde a ping só ao administrador. <span class="cot">2</span></li>
+    <li><b>REDIRECT:</b> de fora, o porto 8080 leva ao site (80) e o porto 2222 leva ao SSH (22), que continua só para o administrador. Que linha falta no template para isto funcionar bem, e onde a pões? Precisas de regras novas na INPUT para o 8080 e o 2222? <span class="cot">1,25</span></li>
+    <li>Um colega acrescentou <code>$IPT -A INPUT --dport 80 -m state --state NEW -j ACCEPT</code> e, ao correr o script, apareceu <code>iptables v1.8.10 (nf_tables): unknown option "--dport"</code>. Porquê? Corrige. <span class="cot">0,5</span></li>
+    <li><b>Prova final:</b> corre o script, mostra as regras ativas (filter e nat), guarda-as em <code>regras3.txt</code> e faz, na máquina física, os testes da tabela abaixo. Escreve o resultado de cada um. <span class="cot">1</span></li>
+  </ol>
+<div class="tbl"><table>
+  <tr><th>Teste (na máquina física)</th><th>Tem de…</th></tr>
+  <tr><td><code>curl -I http://192.168.56.20</code></td><td>funcionar</td></tr>
+  <tr><td><code>curl -I http://192.168.56.20:8080</code></td><td>funcionar (é o site do 80)</td></tr>
+  <tr><td><code>ssh -p 2222 aluno@192.168.56.20</code></td><td>funcionar (é o administrador)</td></tr>
+  <tr><td><code>ping -c 2 192.168.56.20</code></td><td>funcionar</td></tr>
+  <tr><td><code>nc -zv -w 3 192.168.56.20 3306</code></td><td>falhar</td></tr>
+</table></div>
+  <details class="sol"><summary>Ver resolução</summary>
+  <p>As regras completas estão no ficheiro resolvido, a verde, em <a href="#t3-final">Ficheiros resolvidos</a>. O raciocínio, caso a caso:</p>
+  <ul>
+    <li><b>a) Cliente</b> = é a VM que <b>começa</b> a ligação → <code>OUTPUT</code>, com <code>--dport</code> do serviço e <code>--state NEW</code>. DNS são duas regras (<code>-p udp</code> e <code>-p tcp</code>, ambas <code>--dport 53</code>); web numa só com <code>-m multiport --dports 80,443</code>; ping = <code>-p icmp --icmp-type echo-request</code> (o pedido; a resposta, <code>echo-reply</code>, passa pela genérica). O template oficial não tem <code>DYN</code>, por isso não há <code>--sport</code> (podes criar a variável, mas não é preciso).</li>
+    <li><b>b) Servidor</b> = são os outros a começar → <code>INPUT</code>. Web e 3141: <code>-m multiport --dports 80,3141</code> sem <code>-s</code> (todos). SSH: <code>--dport 22 -s 192.168.56.1</code>. Squid: <code>--dport 3128 -s 192.168.56.0/24</code>. Ping: <code>echo-request</code> com <code>-s 192.168.56.1</code>.</li>
+    <li><b>c)</b> <code>-t nat -A PREROUTING -p tcp --dport 8080 -j REDIRECT --to-port 80</code> e o mesmo para 2222 → 22. A linha que falta é <b><code>$IPT -t nat -F</code></b>, logo a seguir ao <code>$IPT -F</code>: o template só limpa a tabela <b>filter</b>, e cada vez que corresses o script ficava mais uma cópia de cada REDIRECT na nat. <b>Não</b> são precisas regras novas na INPUT: a nat (PREROUTING) muda o porto <b>antes</b> da filter, que já vê o 80 e o 22. É por isso que o 2222 fica só para o administrador: decide a regra do SSH da alínea b).</li>
+    <li><b>d)</b> O <code>--dport</code> pertence ao protocolo (é uma opção do <code>-p tcp</code> ou do <code>-p udp</code>). Sem <code>-p</code>, o iptables não conhece a opção. Correção: <code>$IPT -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT</code>. (O número da versão e o texto exato variam.)</li>
+    <li><b>e)</b> O 3306 falha por <b>timeout</b> (não há regra para ele, a política é DROP; não aparece <i>refused</i> porque não há REJECT). Todos os outros funcionam.</li>
+  </ul>
+<div class="code" data-label="e) correr, mostrar, guardar e testar"><pre><code>chmod +x firewall.sh &amp;&amp; sudo ./firewall.sh      # na VM: só aparecem os echo, sem linhas "iptables v1.8…"
+sudo iptables -S                                # filter
+sudo iptables -t nat -S                         # nat: os 2 REDIRECT (uma vez só, mesmo correndo o script 2 vezes)
+sudo iptables-save &gt; ~/teste3/regras3.txt
+# na máquina física
+curl -I http://192.168.56.20                    # HTTP/1.0 200 OK
+curl -I http://192.168.56.20:8080               # HTTP/1.0 200 OK (o mesmo site)
+ssh -p 2222 aluno@192.168.56.20                 # pede a password: entra
+ping -c 2 192.168.56.20                         # 2 respostas
+nc -zv -w 3 192.168.56.20 3306                  # timed out (DROP)</code></pre></div>
+  <p class="muted">Critério: a) DNS 0,5 (UDP e TCP) · web 0,5 · ping 0,25 · b) web e 3141 0,5 · SSH 0,5 · Squid 0,5 · ping 0,5 · c) os 2 REDIRECT 0,5 · <code>-t nat -F</code> e porquê 0,5 · sem regra na INPUT 0,25 · d) 0,5 · e) mostrar e guardar 0,5 · testes 0,5. Regra na chain errada (OUTPUT/INPUT trocadas) = 0 nessa regra.</p>
+  </details>
+</section>
+
+<!-- ================================================================ P4 SQUID -->
+<section class="card" id="t3-p4" data-grupo="As 5 perguntas (teste 3)" data-k="pergunta 4 squid teste 3 acl http_access ordem redes sociais dstdomain url_regex promo time almoço estagiário 403 503 reconfigure">
+  <p class="eyebrow">Pergunta 4 · Squid · 4 valores</p>
+  <h2>Pergunta 4: Squid (as regras da loja)</h2>
+  <div class="tip"><span class="lab">Objetivo final</span><p>Os 4 testes da alínea d) darem exatamente o código HTTP indicado (200, 403 ou 503).</p></div>
+  <p>Só com <code>acl</code> e <code>http_access</code>, sobre o <a href="#t3-ficheiros">excerto do squid.conf fornecido</a>, o dono da loja quer:</p>
+  <ol>
+    <li>só a rede <code>192.168.56.0/24</code> usa o proxy;</li>
+    <li>ninguém acede a redes sociais: <code>facebook.com</code>, <code>instagram.com</code> e <code>tiktok.com</code>, com os subdomínios;</li>
+    <li>ninguém acede a URLs com a palavra <code>promo</code> (maiúsculas ou minúsculas);</li>
+    <li>à hora de almoço (2.ª a 6.ª, 12:00–14:00) a rede só acede ao site da loja, <code>loja.empresa.pt</code>;</li>
+    <li>o estagiário, <code>192.168.56.66</code>, só acede ao site da loja, a qualquer hora.</li>
+  </ol>
+  <ol type="a">
+    <li>Escreve as linhas <code>acl</code>. <span class="cot">1</span></li>
+    <li>Escreve as linhas <code>http_access</code>, pela ordem certa, e diz <b>onde</b> as pões no ficheiro. <span class="cot">1,5</span></li>
+    <li>Um colega pôs <code>http_access allow rede</code> como <b>primeira</b> das suas regras. O <code>squid -k parse</code> não dá erro. O que acontece? <span class="cot">0,5</span></li>
+    <li><b>Prova final:</b> aplica as regras sem reiniciar o Squid e faz estes 4 testes na máquina física, <b>numa terça-feira às 12:30</b>. Para cada um, diz que código obtiveste e que linha <code>http_access</code> decidiu. E o teste 4 às 16:00? <span class="cot">1</span></li>
+  </ol>
+<div class="code" data-label="d) os 4 testes (na máquina física)"><pre><code>curl -x http://192.168.56.20:3128 -I http://www.facebook.com/          # 1
+curl -x http://192.168.56.20:3128 -I http://loja.empresa.pt/           # 2
+curl -x http://192.168.56.20:3128 -I http://loja.empresa.pt/promo.html # 3
+curl -x http://192.168.56.20:3128 -I http://www.ipleiria.pt/           # 4</code></pre></div>
+  <details class="sol"><summary>Ver resolução</summary>
+<div class="code" data-hl data-label="squid.conf: zona das regras (resolução)"><pre><code><span class="c"># INSERT YOUR OWN RULE(S) HERE TO ALLOW ACCESS FROM YOUR CLIENTS</span>
+<span class="ln-add">acl rede       src 192.168.56.0/24                            <span class="c"># 1</span></span>
+<span class="ln-add">acl estagiario src 192.168.56.66                              <span class="c"># 5</span></span>
+<span class="ln-add">acl redes      dstdomain .facebook.com .instagram.com .tiktok.com  <span class="c"># 2 (o ponto apanha os subdomínios)</span></span>
+<span class="ln-add">acl promo      url_regex -i promo                             <span class="c"># 3 (-i: maiúsculas ou minúsculas)</span></span>
+<span class="ln-add">acl loja       dstdomain loja.empresa.pt                      <span class="c"># 4 e 5</span></span>
+<span class="ln-add">acl almoco     time MTWHF 12:00-14:00                         <span class="c"># 4 (M T W H F = 2.ª a 6.ª)</span></span>
+
+<span class="ln-add">http_access <span class="t">deny</span>  redes                <span class="c"># 2: ninguém (antes de qualquer allow)</span></span>
+<span class="ln-add">http_access <span class="t">deny</span>  promo                <span class="c"># 3: ninguém, nem no site da loja</span></span>
+<span class="ln-add">http_access <span class="t">allow</span> estagiario loja      <span class="c"># 5: a loja, a qualquer hora</span></span>
+<span class="ln-add">http_access <span class="t">deny</span>  estagiario           <span class="c"># 5: e mais nada (antes do allow rede: ele também é da rede)</span></span>
+<span class="ln-add">http_access <span class="t">allow</span> rede loja            <span class="c"># 4: a loja, mesmo ao almoço (antes do deny almoço)</span></span>
+<span class="ln-add">http_access <span class="t">deny</span>  rede almoco          <span class="c"># 4: ao almoço, o resto não</span></span>
+<span class="ln-add">http_access <span class="t">allow</span> rede                 <span class="c"># 1: fora do almoço, a rede navega</span></span>
+
+include /etc/squid/conf.d/*.conf
+http_access <span class="t">allow</span> localhost
+http_access <span class="t">deny</span> all                    <span class="c"># 1: quem não é da rede leva 403</span></code></pre></div>
+  <ul>
+    <li><b>a)</b> <code>src</code> = quem pede (IP do cliente); <code>dstdomain</code> = para onde (o nome do site; com <code>.</code> à frente apanha o domínio e todos os subdomínios); <code>url_regex -i</code> = uma palavra em qualquer parte do URL; <code>time</code> = dias e horas (letras em inglês: <b>M</b>onday, <b>T</b>uesday, <b>W</b>ednesday, T<b>H</b>ursday, <b>F</b>riday).</li>
+    <li><b>b) Onde:</b> no sítio do comentário <i>INSERT YOUR OWN RULE(S) HERE</i>, <b>antes</b> do <code>include</code> e do <code>http_access deny all</code>. O Squid lê as <code>http_access</code> de cima para baixo e pára na <b>primeira</b> que bate; o que vem depois do <code>deny all</code> nunca é lido. <b>Ordem:</b> primeiro os <code>deny</code> que são para todos (redes e promo), depois as exceções mais específicas (o estagiário, a loja ao almoço) e só no fim o <code>allow rede</code> geral. Linhas com 2 acls (<code>allow rede loja</code>) só batem quando as duas são verdade (E). Alternativa válida para o almoço: <code>http_access deny rede almoco !loja</code> no lugar das duas linhas.</li>
+    <li><b>c)</b> Todos os pedidos da rede batem logo no <code>allow rede</code> e são permitidos: as regras de baixo nunca são lidas. Redes sociais, promo, almoço e estagiário passam todos. O <code>parse</code> só vê erros de sintaxe, não de lógica.</li>
+  </ul>
+<div class="code" data-label="d) aplicar (na VM)"><pre><code>sudo squid -k parse &amp;&amp; sudo squid -k reconfigure      # valida e aplica sem reiniciar
+sudo tail -f /var/log/squid/access.log                # vê cada pedido a chegar</code></pre></div>
+<div class="tbl"><table>
+  <tr><th>Teste (d), 3.ª às 12:30</th><th>Código</th><th>Decidiu</th></tr>
+  <tr><td>1 · www.facebook.com</td><td><code>403</code> TCP_DENIED</td><td><code>deny redes</code> (o Squid nega pelo nome, nem precisa de DNS)</td></tr>
+  <tr><td>2 · loja.empresa.pt</td><td><code>200</code> TCP_MISS</td><td><code>allow rede loja</code> (a física, .1, é da rede)</td></tr>
+  <tr><td>3 · loja.empresa.pt/promo.html</td><td><code>403</code></td><td><code>deny promo</code> (vem antes do <code>allow rede loja</code>)</td></tr>
+  <tr><td>4 · www.ipleiria.pt</td><td><code>403</code></td><td><code>deny rede almoco</code></td></tr>
+  <tr><td>4 · www.ipleiria.pt às 16:00</td><td><code>503</code></td><td><code>allow rede</code>: foi <b>permitido</b>, mas sem Internet o Squid não resolve o nome (<code>ERR_DNS_FAIL</code>). 403 = o Squid negou; 503 = o Squid deixou e falhou a ir buscar.</td></tr>
+</table></div>
+  <p class="muted">Critério: a) 0,25 por cada 2 acls certas (o ponto e o <code>-i</code> contam) · b) linhas 0,75 + ordem 0,5 + onde 0,25 · c) 0,5 · d) reconfigure 0,25 + os 4 testes 0,5 + o 503 0,25. Se a firewall da P3 estiver ativa, a física só chega ao 3128 por causa da regra do Squid da P3.</p>
+  </details>
+</section>
+
+<!-- ================================================================ P5 ENCRIPTAÇÃO -->
+<section class="card" id="t3-p5" data-grupo="As 5 perguntas (teste 3)" data-k="pergunta 5 encriptação teste 3 cofre.enc openssl enc aes-256-cbc pbkdf2 base64 bad magic number bad decrypt sha256sum steghide gpg -c missao">
+  <p class="eyebrow">Pergunta 5 · encriptação · 4 valores</p>
+  <h2>Pergunta 5: encriptação (abrir o cofre)</h2>
+  <div class="tip"><span class="lab">Objetivo final</span><p>Abrir o <code>cofre.enc</code> com a password da P1 e entregar a missão cifrada: o ficheiro <code>missao.txt.asc</code>.</p></div>
+  <p>Trabalha na pasta <code>~/teste3/</code>. Para cada alínea indica os comandos usados.</p>
+  <ol type="a">
+    <li>O professor deu a pasta <code>docs/</code> com a lista <code>docs/SHA256SUMS</code> dos hashes originais. Algum documento foi alterado? Qual? Como é que o hash o mostra? <span class="cot">0,75</span></li>
+    <li>A imagem <code>farol.jpg</code> tem uma mensagem escondida. Mostra que tem dados escondidos e extrai-os com a passphrase da P2. Qual é a mensagem? <span class="cot">0,75</span></li>
+    <li>O <a href="#t3-ficheiros">cofre.enc</a> foi cifrado com o OpenSSL em <b>AES-256-CBC</b>, com <b>PBKDF2</b>, em <b>base64</b>, com a password da P1. Decifra-o para <code>cofre.txt</code>. O que diz? <span class="cot">1</span></li>
+    <li>Um colega tentou duas vezes e obteve estes erros. Explica cada um.
+<div class="out"><div class="lbl">saída</div><pre>$ openssl enc -d -aes-256-cbc -pbkdf2 -in cofre.enc -out cofre.txt -pass pass:Marinha2026
+bad magic number
+$ openssl enc -d -aes-256-cbc -pbkdf2 -a -in cofre.enc -out cofre.txt -pass pass:marinha2026
+bad decrypt
+80603AF301000000:error:1C800064:Provider routines:ossl_cipher_unpadblock:bad decrypt:providers/implementations/ciphers/ciphercommon_block.c:107:</pre></div> <span class="cot">0,5</span></li>
+    <li><b>Prova final:</b> cria <code>missao.txt</code> com as 5 respostas-chave (porto escondido, password, passphrase, documento alterado, código do cofre). Cifra-o com o <b>GnuPG</b>, cifra simétrica AES-256, em texto (ASCII), para <code>missao.txt.asc</code>. Decifra-o para outro ficheiro e prova que é igual ao original. <span class="cot">1</span></li>
+  </ol>
+  <details class="sol"><summary>Ver resolução</summary>
+<div class="code" data-label="P5 (na VM)"><pre><code>cd ~/teste3/docs &amp;&amp; sha256sum -c SHA256SUMS &amp;&amp; cd ..       # a) precos.txt: FAILED · os outros OK
+steghide info farol.jpg -p farol                             # b) embedded file "msg.txt" (cifrado, rijndael-128)
+steghide extract -sf farol.jpg -p farol -xf mensagem.txt     # b) wrote extracted data to "mensagem.txt".
+cat mensagem.txt                                             # b) Chave do armario: 7319
+openssl enc -d -aes-256-cbc -pbkdf2 -a -in cofre.enc -out cofre.txt -pass pass:Marinha2026   # c)
+cat cofre.txt                                                # c) Missao cumprida! / Codigo final: SS-3141-FAROL
+cat &gt; missao.txt &lt;&lt;'FIM'
+P1 porto escondido: 3141 (http, Python SimpleHTTPServer) · password: Marinha2026
+P2 passphrase: farol
+P5 documento alterado: precos.txt
+P5 mensagem da imagem: Chave do armario: 7319
+P5 cofre: Codigo final: SS-3141-FAROL
+FIM
+gpg -c -a --cipher-algo AES256 missao.txt                    # e) cria missao.txt.asc (pede a password 2 vezes)
+gpg -o missao-dec.txt -d missao.txt.asc                      # e)
+diff missao.txt missao-dec.txt &amp;&amp; echo IGUAIS              # e) IGUAIS</code></pre></div>
+  <ul>
+    <li><b>a)</b> O <code>sha256sum -c</code> recalcula o hash de cada ficheiro e compara com a lista: <code>precos.txt: FAILED</code> e <code>WARNING: 1 computed checksum did NOT match</code>. Alguém mudou o preço (de 1,20 para 0,20 euros). Mudar <b>um só carácter</b> muda o hash por completo, por isso qualquer alteração se vê. O hash garante <b>integridade</b>, não segredo: é de sentido único, não se "decifra" (ao contrário de uma cifra, que garante <b>confidencialidade</b> e se desfaz com a chave).</li>
+    <li><b>b)</b> O <code>steghide info</code> mostra se a imagem tem dados escondidos (com a passphrase certa mostra o nome do ficheiro, o tamanho e a cifra). <code>-sf</code> = o ficheiro "capa" (a imagem), <code>-xf</code> = onde escrever o que se extrai. Com a passphrase errada: <code>could not extract any data with that passphrase!</code>.</li>
+    <li><b>c)</b> <code>-d</code> decifrar · <code>-aes-256-cbc</code> algoritmo e modo · <code>-pbkdf2</code> a mesma derivação da chave usada a cifrar · <code>-a</code> o ficheiro está em base64 (começa por <code>U2FsdGVkX1</code>, que é <code>Salted__</code> em base64) · <code>-pass pass:…</code> a password. Regra de ouro: <b>as mesmas opções a cifrar e a decifrar</b>, mais o <code>-d</code>.</li>
+    <li><b>d)</b> 1.º: faltou o <code>-a</code>. O OpenSSL leu o texto base64 como se fosse binário e não encontrou o cabeçalho <code>Salted__</code> no início: <code>bad magic number</code>. 2.º: a password está errada (<code>marinha</code> com <b>m</b> minúsculo; a password distingue maiúsculas). Chega a outra chave, o último bloco não tem um padding válido e dá <code>bad decrypt</code>. O mesmo erro aparece se faltar o <code>-pbkdf2</code> ou se o algoritmo for outro.</li>
+    <li><b>e)</b> <code>-c</code> = cifra simétrica (só password, sem chaves); <code>-a</code> = ASCII (o ficheiro <code>.asc</code> começa por <code>-----BEGIN PGP MESSAGE-----</code>); <code>--cipher-algo AES256</code> = o algoritmo. O <code>diff</code> sem saída (e o <code>IGUAIS</code>) prova que ficaram iguais; também se pode comparar o <code>sha256sum</code> dos dois. Se o gpg decifrar sem pedir a password, foi o <code>gpg-agent</code> que a guardou: <code>gpgconf --kill gpg-agent</code> obriga a pedir de novo.</li>
+  </ul>
+  <p class="muted">Critério: a) comando 0,5 + qual e porquê 0,25 · b) info 0,25 + extrair e mensagem 0,5 · c) comando 0,75 + mensagem 0,25 · d) 0,25 + 0,25 · e) ficheiro 0,25 · cifrar 0,25 · decifrar 0,25 · provar 0,25. O <code>cofre.enc</code> foi gerado e decifrado de verdade com o OpenSSL; as saídas da d) são as reais.</p>
+  </details>
+</section>
+
+<!-- ================================================================ RESOLUÇÃO COMPLETA -->
+<section class="card" id="t3-final" data-grupo="Depois do teste 3" data-k="resolução completa firewall.sh template oficial resolvido teste 3">
+  <p class="eyebrow">Depois do teste</p>
+  <h2>Ficheiros resolvidos (teste 3)</h2>
+  <p>O <code>firewall.sh</code> com todas as respostas da Pergunta 3; o que mudou em relação ao template dado está <b>a verde</b>. O bloco final do <code>squid.conf</code> está na resolução da <a href="#t3-p4">Pergunta 4</a>.</p>
+  <details class="sol"><summary>Ver o firewall.sh resolvido</summary>
+<div class="code" data-hl data-label="firewall.sh (resolução completa)" data-file="firewall-teste3-resolvido.sh"><pre><code><span class="c">#!/bin/bash</span>
+
+<span class="c">#################################</span>
+<span class="c">#           Student ID</span>
+<span class="c">#################################</span>
+<span class="ln-add"><span class="c">#   full name: (o teu nome)</span></span>
+<span class="ln-add"><span class="c">#      number: (o teu número)</span></span>
+<span class="c">#################################</span>
+
+echo &quot;Define iptables path&quot;
+IPT=/sbin/iptables
+<span class="ln-add">ADMIN=192.168.56.1                <span class="c"># o PC do administrador (a máquina física)</span></span>
+<span class="ln-add">REDE=192.168.56.0/24              <span class="c"># a rede host-only</span></span>
+
+echo &quot;Set default policy to DENY&quot;
+$IPT -P INPUT <span class="t">DROP</span>
+$IPT -P OUTPUT <span class="t">DROP</span>
+$IPT -P FORWARD <span class="t">DROP</span>
+
+echo &quot;Flush any existing filter rules&quot;
+$IPT -F
+<span class="ln-add">echo &quot;c) Flush the nat table (o template só limpa a filter)&quot;</span>
+<span class="ln-add">$IPT -t nat -F</span>
+
+
+<span class="c">#################################</span>
+<span class="c">#  Stateless rules</span>
+<span class="c">#################################</span>
+
+echo &quot;Allow loopback interface&quot;
+$IPT -A INPUT -i lo -j <span class="t">ACCEPT</span>
+$IPT -A OUTPUT -o lo -j <span class="t">ACCEPT</span>
+
+
+<span class="c"># Clearly indicate, using a comment or an echo command, which specific item you are addressing.</span>
+
+<span class="ln-add">echo &quot;a) cliente: DNS (UDP e TCP)&quot;</span>
+<span class="ln-add">$IPT -A OUTPUT -p udp --dport 53 -m state --state NEW -j <span class="t">ACCEPT</span></span>
+<span class="ln-add">$IPT -A OUTPUT -p tcp --dport 53 -m state --state NEW -j <span class="t">ACCEPT</span></span>
+
+<span class="ln-add">echo &quot;a) cliente: HTTP e HTTPS&quot;</span>
+<span class="ln-add">$IPT -A OUTPUT -p tcp -m multiport --dports 80,443 -m state --state NEW -j <span class="t">ACCEPT</span></span>
+
+<span class="ln-add">echo &quot;a) cliente: ping para qualquer máquina&quot;</span>
+<span class="ln-add">$IPT -A OUTPUT -p icmp --icmp-type echo-request -m state --state NEW -j <span class="t">ACCEPT</span></span>
+
+<span class="ln-add">echo &quot;b) servidor: web (80) e serviço 3141 para todos&quot;</span>
+<span class="ln-add">$IPT -A INPUT -p tcp -m multiport --dports 80,3141 -m state --state NEW -j <span class="t">ACCEPT</span></span>
+
+<span class="ln-add">echo &quot;b) servidor: SSH só do administrador&quot;</span>
+<span class="ln-add">$IPT -A INPUT -p tcp --dport 22 -s $ADMIN -m state --state NEW -j <span class="t">ACCEPT</span></span>
+
+<span class="ln-add">echo &quot;b) servidor: proxy Squid só da rede&quot;</span>
+<span class="ln-add">$IPT -A INPUT -p tcp --dport 3128 -s $REDE -m state --state NEW -j <span class="t">ACCEPT</span></span>
+
+<span class="ln-add">echo &quot;b) servidor: responder a ping só ao administrador&quot;</span>
+<span class="ln-add">$IPT -A INPUT -p icmp --icmp-type echo-request -s $ADMIN -m state --state NEW -j <span class="t">ACCEPT</span></span>
+
+<span class="ln-add">echo &quot;c) REDIRECT 8080 -&gt; 80 e 2222 -&gt; 22 (a INPUT já vê o 80 e o 22)&quot;</span>
+<span class="ln-add">$IPT -t nat -A PREROUTING -p tcp --dport 8080 -j <span class="t">REDIRECT</span> --to-port 80</span>
+<span class="ln-add">$IPT -t nat -A PREROUTING -p tcp --dport 2222 -j <span class="t">REDIRECT</span> --to-port 22</span>
+
+
+<span class="c">#################################</span>
+<span class="c">#  Stateful rules</span>
+<span class="c">#################################</span>
+
+echo &quot;Generic stateful rules&quot;
+$IPT -A INPUT -m state --state ESTABLISHED,RELATED -j <span class="t">ACCEPT</span>
+$IPT -A OUTPUT -m state --state ESTABLISHED,RELATED -j <span class="t">ACCEPT</span></code></pre></div>
+  <p class="muted">As regras novas são <code>--state NEW</code> e podem ficar antes das genéricas: cada pacote só bate numa delas (o 1.º pacote nas tuas, o resto da ligação nas genéricas). Para testares o 8080 na própria VM (<code>curl localhost:8080</code>) faltava a nat OUTPUT, que não foi pedida: <code>$IPT -t nat -A OUTPUT -o lo -p tcp --dport 8080 -j REDIRECT --to-port 80</code>.</p>
+  </details>
+</section>
+
+<!-- ================================================================ GRELHA -->
+<section class="card" id="t3-correcao" data-grupo="Depois do teste 3" data-k="grelha correção nota cotações autocorreção teste 3">
+  <p class="eyebrow">Depois do teste</p>
+  <h2>Grelha de correção (teste 3)</h2>
+  <p>Abre cada resolução, soma os pontos pelo critério do fim dela e escreve quanto tiveste em cada pergunta. A nota fica guardada neste browser.</p>
+  <div class="tbl"><table class="grelha">
+    <tr><th>Pergunta</th><th class="num">Cotação</th><th class="num">Tive</th></tr>
+    <tr><td><a href="#t3-p1">1</a> nmap</td><td class="num">3</td><td class="num"><input class="nota" type="number" name="p1" data-max="3" min="0" max="3" step="0.25" inputmode="decimal" aria-label="Nota da pergunta 1 do teste 3"></td></tr>
+    <tr><td><a href="#t3-p2">2</a> SSH</td><td class="num">3</td><td class="num"><input class="nota" type="number" name="p2" data-max="3" min="0" max="3" step="0.25" inputmode="decimal" aria-label="Nota da pergunta 2 do teste 3"></td></tr>
+    <tr><td><a href="#t3-p3">3</a> iptables</td><td class="num">6</td><td class="num"><input class="nota" type="number" name="p3" data-max="6" min="0" max="6" step="0.25" inputmode="decimal" aria-label="Nota da pergunta 3 do teste 3"></td></tr>
+    <tr><td><a href="#t3-p4">4</a> Squid</td><td class="num">4</td><td class="num"><input class="nota" type="number" name="p4" data-max="4" min="0" max="4" step="0.25" inputmode="decimal" aria-label="Nota da pergunta 4 do teste 3"></td></tr>
+    <tr><td><a href="#t3-p5">5</a> Encriptação</td><td class="num">4</td><td class="num"><input class="nota" type="number" name="p5" data-max="4" min="0" max="4" step="0.25" inputmode="decimal" aria-label="Nota da pergunta 5 do teste 3"></td></tr>
+    <tr class="total"><td><b>Nota final</b></td><td class="num"><b>20</b></td><td class="num"><b class="nota-final" id="t3-nota">0</b></td></tr>
+  </table></div>
+  <p id="t3-conselho" class="muted"></p>
+  <p><button class="btn-ghost" type="button" id="t3-limpar">Limpar as notas</button></p>
+  <div class="tbl"><table>
+    <tr><th>Se perdeste pontos na…</th><th>Revê</th></tr>
+    <tr><td>Pergunta 1</td><td><a href="#e-nmap">Exercícios de nmap</a> · guia: <a href="#g-nmap-pratica">nmap na prática</a></td></tr>
+    <tr><td>Pergunta 2</td><td><a href="#e-ssh">Exercícios de túneis</a> · guia: <a href="#g-ssh-tun">Túneis</a></td></tr>
+    <tr><td>Pergunta 3</td><td><a href="#e-tpl">O template e como o alterar</a> · <a href="#e-sim">A1 a A10</a> · <a href="#e-ipt-erros">E1 a E8</a></td></tr>
+    <tr><td>Pergunta 4</td><td><a href="#e-squid">Exercícios de Squid</a> · guia: <a href="#g-squid-decisao">Como o Squid decide</a></td></tr>
+    <tr><td>Pergunta 5</td><td><a href="#e-m6">Exercícios de cifra, hash e esteganografia</a> · guia: <a href="#g-cifra-ferramentas">Ferramentas de cifra</a>, <a href="#g-hash">Hash</a>, <a href="#g-estego">Esteganografia</a></td></tr>
+  </table></div>
+</section>
+
+</div>
+</div>
+</div>
+
 <div class="panel" data-tab="gerador" id="p-gerador" hidden>
 <div class="gen-page">
 
@@ -13350,8 +13840,8 @@ else:
     set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* sem armazenamento */ } }
   };
   var IS_LOCAL = location.protocol === 'file:';
-  var TABS = ['guia', 'docs', 'exercicios', 'teste', 'teste2', 'gerador', 'scripts'];
-  var TAB_NAMES = { guia: 'Guia', docs: 'Documentação', exercicios: 'Exercícios', teste: 'Teste modelo 1', teste2: 'Teste modelo 2', gerador: 'Gerador', scripts: 'Scripts' };
+  var TABS = ['guia', 'docs', 'exercicios', 'teste', 'teste2', 'teste3', 'gerador', 'scripts'];
+  var TAB_NAMES = { guia: 'Guia', docs: 'Documentação', exercicios: 'Exercícios', teste: 'Teste modelo 1', teste2: 'Teste modelo 2', teste3: 'Teste modelo 3', gerador: 'Gerador', scripts: 'Scripts' };
 
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
@@ -13859,6 +14349,7 @@ else:
   /* um erro aqui não pode impedir o resto da página */
   try { iniciarTeste('p-teste', 't', 'ss-teste', 2 * 60 * 60); } catch (e) { /* ignora */ }
   try { iniciarTeste('p-teste2', 't2', 'ss-teste2', 150 * 60); } catch (e) { /* ignora */ }
+  try { iniciarTeste('p-teste3', 't3', 'ss-teste3', 90 * 60); } catch (e) { /* ignora */ }
 
   route();
 })();
