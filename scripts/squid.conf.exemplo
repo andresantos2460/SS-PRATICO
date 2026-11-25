@@ -1,0 +1,58 @@
+# =====================================================================
+#  /etc/squid/squid.conf  -  exemplo limpo com as regras das aulas
+#  Antes:  sudo cp /etc/squid/squid.conf /etc/squid/squid.conf.backup
+#  Depois: sudo squid -k parse   (verifica)   e   sudo squid -k reconfigure
+#  NOTA: all, localhost, manager, to_localhost já existem (não redefinir).
+# =====================================================================
+
+# ---------- ACL base
+acl localnet src 192.168.56.0/24          # rede dos clientes (AJUSTAR)
+acl SSL_ports port 443
+acl Safe_ports port 80 21 443 70 210 280 488 591 777 1025-65535
+acl CONNECT method CONNECT
+
+# ---------- ACL dos exercícios
+acl windows   src 192.168.56.1            # IP da máquina Windows (AJUSTAR)
+acl site_hf   dstdomain .httpforever.com
+acl aulas     time MTWHF 14:00-18:00      # S M T W H F A = Dom Seg Ter Qua Qui Sex Sáb
+acl ipleiria  url_regex -i ipleiria
+acl leiria    url_regex -i leiria
+acl facebook  dstdomain .facebook.com .fbcdn.net
+acl trabalho  time MTWHF 09:00-13:00
+acl trabalho  time MTWHF 14:00-18:00      # 2.ª linha com o mesmo nome = OU
+acl pdf       urlpath_regex -i \.pdf$
+
+# ---------- REGRAS: lidas de cima para baixo, a 1.ª que bate decide
+http_access deny !Safe_ports
+http_access deny CONNECT !SSL_ports
+http_access allow localhost manager
+http_access deny manager
+
+http_access deny site_hf aulas            # nega o site DURANTE as aulas (E)
+#http_access deny site_hf !aulas          # (ao contrário: só deixa DURANTE as aulas)
+http_access allow ipleiria                # exceção: ...ipleiria... passa
+http_access deny leiria                   # nega URLs com "leiria"
+http_access deny facebook trabalho        # Facebook negado no horário de trabalho
+http_access deny pdf                      # nega .pdf (só funciona em HTTP)
+
+http_access allow windows
+http_access allow localnet
+http_access allow localhost
+http_access deny all                      # no FIM, nega tudo o resto
+
+# ---------- portos
+http_port 3128                            # proxy configurado no browser
+http_port 3129 intercept                  # proxy transparente (iptables REDIRECT)
+
+# ---------- cache
+cache_mem 64 MB
+cache_dir ufs /var/spool/squid 1000 16 256    # 1000 MB, 16 pastas, 256 subpastas
+refresh_pattern -i \.(png|jpg|gif)$ 120 50% 86400 ignore-reload
+refresh_pattern -i \.(css|js)$      120 50% 86400 ignore-reload
+refresh_pattern .                     0 20%  4320
+
+# ---------- logs e nome
+access_log /var/log/squid/access.log squid
+cache_log  /var/log/squid/cache.log
+coredump_dir /var/spool/squid
+visible_hostname gateway-ss

@@ -1,0 +1,13 @@
+# /etc/fail2ban/jail.local  -  proteger o SSH contra força bruta
+# Depois:  sudo systemctl restart fail2ban
+#          sudo fail2ban-client status sshd
+[sshd]
+enabled  = true
+port     = 22                 # se o SSH estiver noutro porto, ex.: 2222
+filter   = sshd
+logpath  = /var/log/auth.log
+maxretry = 3                  # n.º de tentativas falhadas antes do ban
+findtime = 600                # ... dentro desta janela (segundos)
+bantime  = 600                # tempo de bloqueio (segundos)
+# Se não existir /var/log/auth.log (sistema só com journald), usar:
+# backend = systemd

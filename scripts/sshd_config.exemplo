@@ -1,0 +1,22 @@
+# /etc/ssh/sshd_config  -  excerto com as opções pedidas nas aulas
+# Testar a sintaxe:   sudo sshd -t
+# Ver o que está ativo: sudo sshd -T | grep -Ei 'port|password|permitroot|allowusers'
+# Aplicar:            sudo systemctl restart ssh
+#   (Ubuntu 24.04+: se o porto não mudar ->
+#    sudo systemctl daemon-reload && sudo systemctl restart ssh.socket)
+
+Port 2222                               # porto diferente do 22
+PermitRootLogin no                      # root não entra por SSH
+PubkeyAuthentication yes                # autenticação por chave pública
+PasswordAuthentication no               # sem login por password
+AuthorizedKeysFile .ssh/authorized_keys .ssh/authorized_keys2
+AllowUsers aluno                        # só este utilizador pode entrar
+
+# Chaves que autenticam o SERVIDOR (fingerprint pedido na 1.ª ligação)
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ed25519_key
+
+# ATENÇÃO: os ficheiros em /etc/ssh/sshd_config.d/*.conf são lidos
+# primeiro e o 1.º valor ganha (ex.: 50-cloud-init.conf com
+# "PasswordAuthentication yes"). Confirma sempre com: sudo sshd -T
