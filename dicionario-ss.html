@@ -1145,6 +1145,25 @@ for n in range(10000):
         break
 else:
     print("Não encontrado")</code></pre></div>
+<div class="it file" id="file-brute-hash-pl-1" data-tab="ficheiros" data-cmd="ficheiro" data-k="brute-hash.pl perl digest::sha sha256_hex forca bruta hash" data-g="Ficheiros" data-s="brute-hash.pl exercicio m6 em perl: igual ao brute-hash.py mas em perl (o professor disse que pode sair em python ou em perl). descobre os 4 digitos (0000-9999) que dao um hash sha-256 no formato %&amp;xxxx. usa digest::sha (ja vem com o perl). correr: perl brute-hash.pl. trocar sha256_hex por md5_hex (use digest::md5) ou sha1_hex. ficheiro script perl"><div class="fh"><b>brute-hash.pl</b> <span>O mesmo exercício em Perl (o professor disse que pode sair em Python — que já tens — ou em Perl).</span><span class="btns"><button class="cp" type="button">copiar</button><button class="dl" type="button" data-name="brute-hash.pl">descarregar</button></span></div><p class="use">Correr: perl brute-hash.pl. O <code>Digest::SHA</code> já vem com o Perl. Para outro algoritmo: <code>sha1_hex</code> (mesmo módulo) ou <code>md5_hex</code> com <code>use Digest::MD5 qw(md5_hex);</code>.</p><p class="nota">Dá exatamente o mesmo que o <code>brute-hash.py</code>: muda só a linguagem. Em Perl o <code>sprintf("%04d", $n)</code> faz o <code>04d</code> do Python e o <code>sha256_hex</code> já devolve o hash em hexadecimal (como o <code>.hexdigest()</code>). Só serve para espaços pequenos.</p><pre><code><span class="cm">#!/usr/bin/perl</span>
+<span class="cm"># Força bruta: descobre xxxx (0000-9999) tal que SHA-256("%&amp;xxxx") == alvo</span>
+<span class="cm"># Correr:  perl brute-hash.pl</span>
+<span class="cm"># Outro algoritmo: sha1_hex (mesmo módulo) ou md5_hex (use Digest::MD5)</span>
+use strict;
+use warnings;
+use Digest::SHA qw(sha256_hex);
+
+my $alvo    = "5c768b72dd12f977360d0124c0adf74c44c809b4aa08de07a3acffbc576b15f4";
+my $prefixo = "%&amp;";
+
+for my $n (0..9999) {
+    my $candidato = sprintf("%s%04d", $prefixo, $n);   <span class="cm"># 7 -&gt; "0007"</span>
+    if (sha256_hex($candidato) eq $alvo) {
+        print "Encontrei: $candidato\n";
+        exit 0;
+    }
+}
+print "Não encontrado\n";</code></pre></div>
 </section>
 <section class="tab" id="t-teste">
 <h2>Teste de treino do professor <span class="sub">Study_Test (1h30, slides permitidos) — respostas</span></h2>
