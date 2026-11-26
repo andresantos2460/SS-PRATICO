@@ -7088,7 +7088,7 @@ sudo iptables-save &gt; regras.txt          # entregar as regras ativas</code></
 </section>
 
 <!-- ================================================================ IPTABLES: ALTERAR O TEMPLATE -->
-<section class="card" id="e-sim" data-grupo="M4 · iptables (como sai no teste)" data-k="exercícios alterar template cliente servidor redirect simulação">
+<section class="card" id="e-sim" data-grupo="M4 · iptables (como sai no teste)" data-k="exercícios alterar template cliente servidor redirect simulação chains -N -X return listanegra ssh_admin limite_web">
   <p class="eyebrow">M4 · iptables · exercícios</p>
   <h2>Alterar o template: cliente, servidor e REDIRECT (A1 a A10)</h2>
   <p>Todos partem do <a href="#e-tpl">template</a> (A9 parte do <code>facebook.sh</code> das aulas). Copia-o para o nome pedido e faz as alterações. A resolução mostra o raciocínio de cada alínea, o ficheiro completo com as alterações <b>a verde</b> (podes descarregá-lo), como testar e os cuidados.</p>
@@ -7104,6 +7104,7 @@ sudo iptables-save &gt; regras.txt          # entregar as regras ativas</code></
   <tr><td><a href="#ex-tpl-8">A8</a></td><td><code>restricoes.sh</code></td><td>servidor + cliente</td><td>MAC, multiport, iprange, <code>!</code>, intervalo de portos, horário</td></tr>
   <tr><td><a href="#ex-tpl-9">A9</a></td><td><code>facebook.sh</code></td><td>cliente</td><td>alterar o script das aulas: ficheiro de IPs, chain, HTTP/3</td></tr>
   <tr><td><a href="#ex-tpl-10">A10</a></td><td><code>firewall-final.sh</code></td><td>tudo</td><td>simulação (~45 min): limites, REDIRECT, chain LOG_REJECT, IPv6</td></tr>
+  <tr><td><a href="#ex-tpl-11">A11</a></td><td><code>chains2.sh</code></td><td>servidor (chains)</td><td>template oficial: <code>-X</code>, LISTANEGRA, SSH_ADMIN, LIMITE_WEB (RETURN vs ACCEPT) + 4 erros com chains</td></tr>
 </table></div>
 
 <article class="ex" id="ex-tpl-1">
@@ -8305,6 +8306,198 @@ sudo ip6tables-save &gt; firewall-final.v6</code></pre></div>
     <li><b>f)</b> <code>--reject-with tcp-reset</code> só é aceite numa regra com <code>-p tcp</code>, mesmo dentro da chain.</li>
     <li><b>g)</b> O <code>iptables</code> só trata IPv4: sem o <code>ip6tables</code>, o que vier por IPv6 passa ao lado da firewall.</li>
     <li>Na correção conta muito o <b>teste do que deve falhar</b>: mostra pelo menos um caso negado por cada alínea restritiva.</li>
+  </ul>
+  </details>
+</article>
+
+<article class="ex" id="ex-tpl-11">
+  <header><div><span class="exn">A11</span><h4>Chains no template oficial: LISTANEGRA, SSH_ADMIN e LIMITE_WEB (+ 4 erros)</h4> <span class="pill">Servidor</span> <span class="pill">Chains</span></div></header>
+  <p class="ex-meta"><b>Máquina:</b> VM Ubuntu (<code>192.168.56.20</code>) + máquina física (administrador, <code>192.168.56.1</code>) · <b>Ficheiro:</b> <code>chains2.sh</code> · <b>Tempo:</b> ~20 min</p>
+  <p>A VM é um servidor web. Trabalha sobre o <b>template oficial</b> (<code>iptables_template.sh</code>) e põe as regras na zona do comentário <i>"Clearly indicate…"</i>, com um <code>echo</code> por alínea. Altera-o para que:</p>
+  <ol type="a">
+    <li>o script possa correr <b>duas vezes seguidas</b> sem erros, agora que vai ter chains personalizadas;</li>
+    <li>exista uma chain <code>LISTANEGRA</code> que regista (prefixo <code>LISTA NEGRA: </code>) e descarta tudo o que vem de <code>192.168.56.66</code> e <code>192.168.56.77</code>; <b>todas</b> as novas ligações recebidas passam por ela <b>primeiro</b>;</li>
+    <li>exista uma chain <code>SSH_ADMIN</code> para as novas ligações SSH recebidas: o administrador é <b>aceite</b>; qualquer outro é registado (<code>SSH NEGADO: </code>) e rejeitado com <i>tcp-reset</i>;</li>
+    <li>exista uma chain <code>LIMITE_WEB</code> que deixa passar no máximo 10 novas ligações web por segundo (burst 20) e <b>volta</b> à INPUT; acima disso regista (<code>WEB LIMITE: </code>) e descarta. A VM serve HTTP e HTTPS a todos (os que passam o limite);</li>
+    <li>mostra as chains com os contadores e explica o que quer dizer <code>(1 references)</code>.</li>
+  </ol>
+
+  <p><b>Parte 2 · encontra os erros.</b> Um colega fez assim a zona das regras (o resto do template está igual):</p>
+<div class="code" data-label="chains-colega.sh (zona das regras)"><pre><code>echo &quot;b) lista negra&quot;
+$IPT -A INPUT -m state --state NEW -j LISTANEGRA
+$IPT -N LISTANEGRA
+$IPT -A LISTANEGRA -s 192.168.56.66 -j LOG --log-prefix &quot;LISTA NEGRA: &quot;
+$IPT -A LISTANEGRA -s 192.168.56.66 -j DROP
+$IPT -A LISTANEGRA -s 192.168.56.77 -j LOG --log-prefix &quot;LISTA NEGRA: &quot;
+$IPT -A LISTANEGRA -s 192.168.56.77 -j DROP
+
+echo &quot;d) limite web&quot;
+$IPT -N LIMITE_WEB
+$IPT -A LIMITE_WEB -m limit --limit 10/second --limit-burst 20 -j RETURN
+$IPT -A LIMITE_WEB -j LOG --log-prefix &quot;WEB LIMITE: &quot;
+$IPT -A LIMITE_WEB -j DROP
+$IPT -A INPUT -p tcp -m multiport --dports 80,443 -j LIMITE_WEB</code></pre></div>
+  <p>E obteve isto:</p>
+<div class="out"><div class="lbl">saída</div><pre>$ sudo ./chains-colega.sh          # 1.ª vez
+...
+b) lista negra
+iptables v1.8.10 (nf_tables): Chain 'LISTANEGRA' does not exist
+Try `iptables -h' or 'iptables --help' for more information.
+d) limite web
+$ sudo ./chains-colega.sh          # 2.ª vez
+...
+b) lista negra
+iptables: Chain already exists.
+d) limite web
+iptables: Chain already exists.
+$ curl -m 5 http://192.168.56.20   # na máquina física
+curl: (28) Connection timed out after 5001 milliseconds</pre></div>
+  <ol type="a" start="6">
+    <li>Explica a 1.ª mensagem e corrige.</li>
+    <li>Explica a 2.ª mensagem e corrige (a mesma da alínea a).</li>
+    <li>Porque é que o site nunca abre, mesmo com 1 só pedido? Corrige.</li>
+    <li>Corrigido o g), as páginas pequenas abrem mas um download grande "pára" ao fim de pouco tempo e o log enche de <code>WEB LIMITE:</code>. Que erro falta?</li>
+  </ol>
+
+  <details class="sol"><summary>Ver resolução</summary>
+  <p><b>Ideia base.</b> Uma chain personalizada é como uma <b>função</b>: <code>-N NOME</code> cria-a (vazia), <code>-A NOME …</code> mete-lhe regras, e uma regra da INPUT com <code>-j NOME</code> "chama-a". Lá dentro o pacote é testado de cima para baixo:</p>
+<div class="tbl"><table>
+  <tr><th>Lá dentro, o pacote bate em…</th><th>O que acontece</th></tr>
+  <tr><td><code>ACCEPT</code> / <code>DROP</code> / <code>REJECT</code></td><td>decisão <b>final</b>: não volta à INPUT, acabou</td></tr>
+  <tr><td><code>LOG</code></td><td>regista e <b>continua</b> para a regra seguinte da chain (o LOG nunca decide)</td></tr>
+  <tr><td><code>RETURN</code></td><td><b>volta</b> à INPUT, para a regra a seguir ao salto (não aceita nada!)</td></tr>
+  <tr><td>nada (chega ao fim da chain)</td><td>igual ao RETURN: volta à INPUT</td></tr>
+</table></div>
+  <p>Por isso há dois estilos de chain: as que <b>decidem</b> lá dentro (a <code>SSH_ADMIN</code> aceita ou rejeita) e as que só <b>filtram e devolvem</b> (a <code>LISTANEGRA</code> descarta os maus e devolve os outros; a <code>LIMITE_WEB</code> devolve os que cabem no limite). Para estas últimas tem de haver um <code>ACCEPT</code> na INPUT <b>depois</b> do salto.</p>
+<div class="tbl"><table>
+  <tr><th>Alínea</th><th>Onde</th><th>O que muda no template</th></tr>
+  <tr><td>a)</td><td>logo a seguir ao <code>$IPT -F</code></td><td><code>$IPT -X</code> (apaga as chains personalizadas)</td></tr>
+  <tr><td>b) c) d)</td><td>zona "Clearly indicate", no início</td><td><code>-N</code> + regras de cada chain (têm de existir <b>antes</b> dos saltos)</td></tr>
+  <tr><td>b)</td><td>INPUT, 1.º salto</td><td><code>-m state --state NEW -j LISTANEGRA</code></td></tr>
+  <tr><td>c)</td><td>INPUT</td><td><code>-p tcp --dport 22 -m state --state NEW -j SSH_ADMIN</code> (a chain decide, não é preciso mais nada)</td></tr>
+  <tr><td>d)</td><td>INPUT</td><td>salto <code>-j LIMITE_WEB</code> e, <b>a seguir</b>, o <code>ACCEPT</code> do 80/443</td></tr>
+</table></div>
+<p class="legenda-add">A <i>verde</i>: as linhas acrescentadas ao template oficial.</p>
+<div class="code" data-hl data-label="chains2.sh (template oficial alterado)" data-file="chains2.sh"><pre><code><span class="c">#!/bin/bash</span>
+
+<span class="c">#################################</span>
+<span class="c">#           Student ID</span>
+<span class="c">#################################</span>
+<span class="c">#   full name:</span>
+<span class="c">#      number:</span>
+<span class="c">#################################</span>
+
+echo &quot;Define iptables path&quot;
+IPT=/sbin/iptables
+
+echo &quot;Set default policy to DENY&quot;
+$IPT -P INPUT <span class="t">DROP</span>
+$IPT -P OUTPUT <span class="t">DROP</span>
+$IPT -P FORWARD <span class="t">DROP</span>
+
+echo &quot;Flush any existing filter rules&quot;
+$IPT -F
+<span class="ln-add">echo &quot;a) apagar as chains personalizadas (depois do -F)&quot;</span>
+<span class="ln-add">$IPT -X</span>
+
+
+<span class="c">#################################</span>
+<span class="c">#  Stateless rules</span>
+<span class="c">#################################</span>
+
+echo &quot;Allow loopback interface&quot;
+$IPT -A INPUT -i lo -j <span class="t">ACCEPT</span>
+$IPT -A OUTPUT -o lo -j <span class="t">ACCEPT</span>
+
+
+<span class="c"># Clearly indicate, using a comment or an echo command, which specific item you are addressing.</span>
+
+<span class="ln-add">echo &quot;b) chain LISTANEGRA: regista e descarta os 2 IPs; os outros voltam&quot;</span>
+<span class="ln-add">$IPT -N LISTANEGRA</span>
+<span class="ln-add">$IPT -A LISTANEGRA -s 192.168.56.66 -j <span class="t">LOG</span> --log-prefix &quot;LISTA NEGRA: &quot;</span>
+<span class="ln-add">$IPT -A LISTANEGRA -s 192.168.56.66 -j <span class="t">DROP</span></span>
+<span class="ln-add">$IPT -A LISTANEGRA -s 192.168.56.77 -j <span class="t">LOG</span> --log-prefix &quot;LISTA NEGRA: &quot;</span>
+<span class="ln-add">$IPT -A LISTANEGRA -s 192.168.56.77 -j <span class="t">DROP</span></span>
+
+<span class="ln-add">echo &quot;c) chain SSH_ADMIN: aceita o administrador; os outros: regista e tcp-reset&quot;</span>
+<span class="ln-add">$IPT -N SSH_ADMIN</span>
+<span class="ln-add">$IPT -A SSH_ADMIN -s 192.168.56.1 -j <span class="t">ACCEPT</span></span>
+<span class="ln-add">$IPT -A SSH_ADMIN -j <span class="t">LOG</span> --log-prefix &quot;SSH NEGADO: &quot;</span>
+<span class="ln-add">$IPT -A SSH_ADMIN -p tcp -j <span class="t">REJECT</span> --reject-with tcp-reset</span>
+
+<span class="ln-add">echo &quot;d) chain LIMITE_WEB: até 10/s volta à INPUT; acima disso regista e descarta&quot;</span>
+<span class="ln-add">$IPT -N LIMITE_WEB</span>
+<span class="ln-add">$IPT -A LIMITE_WEB -m limit --limit 10/second --limit-burst 20 -j <span class="t">RETURN</span></span>
+<span class="ln-add">$IPT -A LIMITE_WEB -j <span class="t">LOG</span> --log-prefix &quot;WEB LIMITE: &quot;</span>
+<span class="ln-add">$IPT -A LIMITE_WEB -j <span class="t">DROP</span></span>
+
+<span class="ln-add">echo &quot;b) 1.º salto: todas as novas ligações passam pela LISTANEGRA&quot;</span>
+<span class="ln-add">$IPT -A INPUT -m state --state NEW -j <span class="t">LISTANEGRA</span></span>
+
+<span class="ln-add">echo &quot;c) ssh (servidor): quem decide é a SSH_ADMIN&quot;</span>
+<span class="ln-add">$IPT -A INPUT -p tcp --dport 22 -m state --state NEW -j <span class="t">SSH_ADMIN</span></span>
+
+<span class="ln-add">echo &quot;d) web (servidor): passa pelo limite e, se voltar, é aceite&quot;</span>
+<span class="ln-add">$IPT -A INPUT -p tcp -m multiport --dports 80,443 -m state --state NEW -j <span class="t">LIMITE_WEB</span></span>
+<span class="ln-add">$IPT -A INPUT -p tcp -m multiport --dports 80,443 -m state --state NEW -j <span class="t">ACCEPT</span></span>
+
+
+<span class="c">#################################</span>
+<span class="c">#  Stateful rules</span>
+<span class="c">#################################</span>
+
+echo &quot;Generic stateful rules&quot;
+$IPT -A INPUT -m state --state ESTABLISHED,RELATED -j <span class="t">ACCEPT</span>
+$IPT -A OUTPUT -m state --state ESTABLISHED,RELATED -j <span class="t">ACCEPT</span></code></pre></div>
+
+  <p><b>O caminho de um pacote, caso a caso</b> (é isto que tens de saber explicar):</p>
+<div class="tbl"><table>
+  <tr><th>Quem / o quê</th><th>Caminho</th><th>Resultado</th></tr>
+  <tr><td>.66 faz ping ou SSH</td><td>INPUT → salto LISTANEGRA → LOG → DROP</td><td>timeout, linha <code>LISTA NEGRA:</code> no log</td></tr>
+  <tr><td>admin (.1) faz SSH</td><td>INPUT → LISTANEGRA (nenhuma regra bate, volta) → salto SSH_ADMIN → ACCEPT</td><td>entra</td></tr>
+  <tr><td>.50 faz SSH</td><td>INPUT → LISTANEGRA (volta) → SSH_ADMIN → LOG → REJECT</td><td><code>Connection refused</code> logo (tcp-reset), linha <code>SSH NEGADO:</code></td></tr>
+  <tr><td>.50 abre o site</td><td>INPUT → LISTANEGRA (volta) → LIMITE_WEB → RETURN → ACCEPT da INPUT</td><td>abre</td></tr>
+  <tr><td>30 pedidos web no mesmo segundo</td><td>os primeiros ~20 (burst) fazem RETURN; os outros caem no LOG + DROP</td><td>alguns falham, linhas <code>WEB LIMITE:</code></td></tr>
+  <tr><td>resto do download / resposta do SSH</td><td>é <code>ESTABLISHED</code>: nenhum salto bate (todos têm <code>NEW</code>) → genérica do fim</td><td>passa</td></tr>
+</table></div>
+
+  <ul>
+    <li><b>a) Porquê o <code>-X</code>.</b> O template oficial só tem <code>-F</code>, que <b>esvazia</b> as chains mas não as apaga. Na 2.ª execução o <code>-N</code> falha com <code>Chain already exists</code>. O <code>-X</code> apaga as chains personalizadas, mas só se estiverem vazias e sem saltos para elas: por isso vem <b>depois</b> do <code>-F</code> (antes dava erro, <i>Too many links</i> ou <i>Device or resource busy</i>, conforme a versão). Não apaga INPUT/OUTPUT/FORWARD.</li>
+    <li><b>Ordem no ficheiro:</b> primeiro os <code>-N</code> e as regras das chains, depois os saltos. Os saltos ficam na zona "Clearly indicate", que vem <b>antes</b> das genéricas: por isso todos têm <code>--state NEW</code> (ver o erro i).</li>
+    <li><b>c) O <code>-p tcp</code> no REJECT:</b> o <code>--reject-with tcp-reset</code> só é aceite numa regra com <code>-p tcp</code>, mesmo dentro de uma chain onde só chega TCP (o iptables não sabe de onde vêm os pacotes).</li>
+    <li><b>c) O LOG vem antes do REJECT</b>, e não depois: o REJECT decide e o pacote nunca chegava ao LOG.</li>
+  </ul>
+<div class="code" data-label="e) mostrar e testar"><pre><code>chmod +x chains2.sh &amp;&amp; sudo ./chains2.sh &amp;&amp; sudo ./chains2.sh   # a) 2 vezes, só aparecem os echo
+sudo iptables -L -n -v --line-numbers        # e) todas as chains com contadores
+sudo iptables -L SSH_ADMIN -n -v             # e) só uma chain
+sudo iptables -S                             # e) em formato de comandos (-N ... e -A ...)
+# na máquina física (é o admin)
+ssh aluno@192.168.56.20                      # entra
+curl -I http://192.168.56.20                 # HTTP/1.1 200 OK
+for i in $(seq 1 40); do curl -s -o /dev/null -m 2 http://192.168.56.20 &amp; done; wait   # d) alguns falham
+# não há outras VMs: para testar o "não admin" e a lista negra, troca o IP no script e volta a correr
+#   SSH_ADMIN com -s 192.168.56.99  -&gt; ssh da física: Connection refused (logo)
+#   LISTANEGRA com -s 192.168.56.1  -&gt; ping/ssh/curl da física: timeout
+sudo journalctl -k | grep -E &quot;LISTA NEGRA|SSH NEGADO|WEB LIMITE&quot;</code></pre></div>
+<div class="out"><div class="lbl">e) o que aparece (excerto)</div><pre>Chain SSH_ADMIN (1 references)
+num   pkts bytes target     prot opt in     out     source               destination
+1        3   180 ACCEPT     all  --  *      *       192.168.56.1         0.0.0.0/0
+2        0     0 LOG        all  --  *      *       0.0.0.0/0            0.0.0.0/0            LOG flags 0 level 4 prefix "SSH NEGADO: "
+3        0     0 REJECT     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            reject-with tcp-reset</pre></div>
+  <p><b>e) <code>(1 references)</code></b> = há <b>1 regra</b> noutra chain que salta para esta (o <code>-j SSH_ADMIN</code> da INPUT). <code>0 references</code> quer dizer que a chain existe mas ninguém a chama: as regras dela nunca são usadas (erro típico: esqueceste o salto). As chains base (INPUT…) mostram <code>(policy DROP …)</code> em vez disso. Os <code>pkts</code> dizem quantos pacotes bateram em cada linha: é assim que provas que a chain está a funcionar.</p>
+
+  <p><b>Parte 2 · os erros do colega</b></p>
+<div class="tbl"><table>
+  <tr><th>Alínea</th><th>Sintoma</th><th>Causa</th><th>Correção</th></tr>
+  <tr><td>f)</td><td><code>Chain 'LISTANEGRA' does not exist</code> (no iptables antigo: <code>Couldn't load target `LISTANEGRA'</code>)</td><td>o salto <code>-j LISTANEGRA</code> vem <b>antes</b> do <code>-N LISTANEGRA</code>: a chain ainda não existia. A regra do salto não foi criada, por isso a lista negra nunca era usada (as regras ficaram na chain, com <code>0 references</code>)</td><td>passar a linha do salto para <b>depois</b> das regras da chain. Atenção: na 2.ª execução este erro <b>some</b> (a chain já existe, vazia, da 1.ª vez), o que o esconde</td></tr>
+  <tr><td>g)</td><td><code>iptables: Chain already exists.</code> na 2.ª vez</td><td>o template só tem <code>-F</code>: as chains ficam lá vazias e o <code>-N</code> falha</td><td><code>$IPT -X</code> logo a seguir ao <code>$IPT -F</code></td></tr>
+  <tr><td>h)</td><td>o site dá timeout sempre</td><td>a <code>LIMITE_WEB</code> faz <code>RETURN</code>: o pacote volta à INPUT, mas <b>não há</b> nenhum <code>ACCEPT</code> para o 80/443 a seguir ao salto → cai na política DROP. O RETURN não aceita</td><td>acrescentar <code>$IPT -A INPUT -p tcp -m multiport --dports 80,443 -m state --state NEW -j ACCEPT</code> depois do salto (ou trocar o RETURN por ACCEPT dentro da chain)</td></tr>
+  <tr><td>i)</td><td>downloads param, log cheio de <code>WEB LIMITE:</code></td><td>o salto não tem <code>-m state --state NEW</code>. No template oficial as genéricas estão <b>no fim</b>, por isso <b>todos</b> os pacotes da ligação (não só o 1.º) passam pelo salto e contam para o limite de 10/s; um download tem centenas por segundo</td><td>pôr <code>-m state --state NEW</code> no salto (e no ACCEPT)</td></tr>
+</table></div>
+  <ul>
+    <li><b>Como pensar nos erros com chains:</b> (1) a chain existe quando é chamada? (<code>-N</code> antes do <code>-j</code>) · (2) o script apaga-a no início? (<code>-F</code> e depois <code>-X</code>) · (3) depois do <code>RETURN</code> há quem aceite? · (4) o salto tem <code>--state NEW</code>? · (5) o LOG vem antes do DROP/REJECT?</li>
+    <li>O texto exato das mensagens muda com a versão do iptables (<code>nf_tables</code> ou <code>legacy</code>); o que conta é perceber a causa.</li>
+    <li>Mais chains: <a href="#ex-tpl-4">A4</a> (LIMITATCP e LOGNOVAS), <a href="#ex-tpl-9">A9</a> (FACEBOOK), <a href="#ex-tpl-10">A10</a> (LOG_REJECT), <a href="#ex-err-8">E8</a> (o RETURN sem ACCEPT do script das aulas) e a teoria em <a href="#g-ipt-chains-pers">chains personalizadas</a>.</li>
   </ul>
   </details>
 </article>
